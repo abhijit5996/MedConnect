@@ -78,7 +78,12 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-border mt-8 pt-8 text-center text-muted-foreground text-sm">
-          <p>&copy; {new Date().getFullYear()} MedConnect. All rights reserved.</p>
+          <p>
+            &copy; {new Date().getFullYear()} MedConnect. All rights reserved
+            <Link to="/admin-dashboard" className="cursor-default select-none hover:text-muted-foreground">
+              .
+            </Link>
+          </p>
         </div>
       </div>
     </footer>

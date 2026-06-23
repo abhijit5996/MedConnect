@@ -7,6 +7,8 @@ import { Card } from "@/components/ui/card";
 import { Activity } from "lucide-react";
 import { toast } from "sonner";
 
+import API from "@/lib/api";
+
 const Register = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -18,7 +20,7 @@ const Register = () => {
     role: "patient",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (formData.password !== formData.confirmPassword) {
@@ -31,9 +33,20 @@ const Register = () => {
       return;
     }
 
-    // Mock registration
-    toast.success("Registration successful! Please log in.");
-    navigate("/login");
+    try {
+      await API.post("/auth/register", {
+        name: formData.fullName,
+        email: formData.email,
+        phone: formData.phone,
+        password: formData.password,
+        role: formData.role,
+      });
+      toast.success("Registration successful! Please log in.");
+      navigate("/login");
+    } catch (error: any) {
+      const msg = error.response?.data?.message || "Registration failed. Please try again.";
+      toast.error(msg);
+    }
   };
 
   return (

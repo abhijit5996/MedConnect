@@ -17,6 +17,7 @@ import {
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { toast } from "sonner";
 
 const Services = () => {
   const mainServices = [
@@ -114,7 +115,7 @@ const Services = () => {
                     </li>
                   ))}
                 </ul>
-                <Button variant="ghost" className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                <Button variant="ghost" className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors" onClick={() => toast.info(`Opening overview details for "${service.title}"...`)}>
                   Learn More <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Card>

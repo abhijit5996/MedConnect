@@ -223,7 +223,7 @@ const Contact = () => {
                   </div>
                   <h4 className="text-lg font-bold mb-2 text-foreground">{option.title}</h4>
                   <p className="text-muted-foreground text-sm mb-4">{option.description}</p>
-                  <Button variant="outline" size="sm" className="w-full">
+                  <Button variant="outline" size="sm" className="w-full" onClick={() => toast({ title: "Support Request", description: `Redirecting you to ${option.title}...` })}>
                     {option.action}
                   </Button>
                 </Card>

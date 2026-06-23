@@ -5,6 +5,15 @@ import { Input } from "@/components/ui/input";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Search, MapPin, Star, Calendar, Video } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import API from "@/lib/api";
+import { Link } from "react-router-dom";
+import { toast } from "sonner";
+
+const fetchDoctors = async () => {
+  const response = await API.get("/doctors");
+  return response.data;
+};
 
 const Doctors = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -20,88 +29,12 @@ const Doctors = () => {
     "General Physician",
   ];
 
-  const doctors = [
-    {
-      id: 1,
-      name: "Dr. Priya Sharma",
-      specialty: "Cardiologist",
-      experience: "15 years",
-      rating: 4.9,
-      reviews: 342,
-      location: "Mumbai, Maharashtra",
-      availability: "Available Today",
-      consultationFee: "₹800",
-      image: "👨‍⚕️",
-      videoConsult: true,
-    },
-    {
-      id: 2,
-      name: "Dr. Rajesh Kumar",
-      specialty: "General Physician",
-      experience: "12 years",
-      rating: 4.7,
-      reviews: 256,
-      location: "Delhi NCR",
-      availability: "Available Tomorrow",
-      consultationFee: "₹600",
-      image: "👨‍⚕️",
-      videoConsult: true,
-    },
-    {
-      id: 3,
-      name: "Dr. Anita Desai",
-      specialty: "Dermatologist",
-      experience: "10 years",
-      rating: 4.8,
-      reviews: 198,
-      location: "Bangalore, Karnataka",
-      availability: "Available Today",
-      consultationFee: "₹700",
-      image: "👩‍⚕️",
-      videoConsult: false,
-    },
-    {
-      id: 4,
-      name: "Dr. Vikram Patel",
-      specialty: "Neurologist",
-      experience: "18 years",
-      rating: 4.9,
-      reviews: 412,
-      location: "Pune, Maharashtra",
-      availability: "Available Tomorrow",
-      consultationFee: "₹1000",
-      image: "👨‍⚕️",
-      videoConsult: true,
-    },
-    {
-      id: 5,
-      name: "Dr. Sunita Menon",
-      specialty: "Pediatrician",
-      experience: "14 years",
-      rating: 4.8,
-      reviews: 287,
-      location: "Chennai, Tamil Nadu",
-      availability: "Available Today",
-      consultationFee: "₹650",
-      image: "👩‍⚕️",
-      videoConsult: true,
-    },
-    {
-      id: 6,
-      name: "Dr. Amit Singh",
-      specialty: "Orthopedic",
-      experience: "16 years",
-      rating: 4.7,
-      reviews: 301,
-      location: "Hyderabad, Telangana",
-      availability: "Next Week",
-      consultationFee: "₹900",
-      image: "👨‍⚕️",
-      videoConsult: false,
-    },
-  ];
+  const { data: doctors = [], isLoading, error } = useQuery({
+    queryKey: ["doctors"],
+    queryFn: fetchDoctors,
+  });
 
-  const filteredDoctors = doctors.filter((doctor) => {
+  const filteredDoctors = doctors.filter((doctor: any) => {
     const matchesSearch =
       doctor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       doctor.specialty.toLowerCase().includes(searchQuery.toLowerCase());
@@ -115,7 +48,7 @@ const Doctors = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-12">
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold mb-4">Find Your Doctor</h1>
@@ -163,10 +96,17 @@ const Doctors = () => {
         </div>
 
         {/* Doctor Cards Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-          {filteredDoctors.map((doctor) => (
-            <Card
-              key={doctor.id}
+        {isLoading ? (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12 animate-pulse">
+            {[1, 2, 3].map((n) => (
+              <Card key={n} className="p-6 h-[250px] bg-card/50 flex flex-col justify-between" />
+            ))}
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            {filteredDoctors.map((doctor: any) => (
+              <Card
+                key={doctor.id}
               className="p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
             >
               <div className="flex items-start gap-4 mb-4">
@@ -215,17 +155,20 @@ const Doctors = () => {
               </div>
 
               <div className="flex gap-2">
-                <Button variant="outline" className="flex-1" size="sm">
+                <Button variant="outline" className="flex-1" size="sm" onClick={() => toast.info(`Detailed profile for ${doctor.name} is available in the booking panel.`)}>
                   View Profile
                 </Button>
-                <Button variant="default" className="flex-1" size="sm">
-                  <Calendar className="h-4 w-4 mr-1" />
-                  Book
-                </Button>
+                <Link to={`/appointments/book?doctorId=${doctor.id}`} className="flex-1">
+                  <Button variant="default" className="w-full" size="sm">
+                    <Calendar className="h-4 w-4 mr-1" />
+                    Book
+                  </Button>
+                </Link>
               </div>
             </Card>
           ))}
         </div>
+        )}
 
         {/* Empty State */}
         {filteredDoctors.length === 0 && (

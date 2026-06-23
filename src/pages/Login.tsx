@@ -7,6 +7,8 @@ import { Card } from "@/components/ui/card";
 import { Activity } from "lucide-react";
 import { toast } from "sonner";
 
+import API from "@/lib/api";
+
 const Login = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -14,22 +16,34 @@ const Login = () => {
     password: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Mock login - in production, this would call your auth service
-    if (formData.email && formData.password) {
+    if (!formData.email || !formData.password) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+
+    try {
+      const response = await API.post("/auth/login", {
+        email: formData.email,
+        password: formData.password,
+      });
+      const { token, user } = response.data;
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+      
       toast.success("Login successful!");
-      // Navigate based on email domain (demo logic)
-      if (formData.email.includes("doctor")) {
+      if (user.role === "doctor") {
         navigate("/doctor-dashboard");
-      } else if (formData.email.includes("admin")) {
+      } else if (user.role === "admin") {
         navigate("/admin-dashboard");
       } else {
         navigate("/patient-dashboard");
       }
-    } else {
-      toast.error("Please fill in all fields");
+    } catch (error: any) {
+      const msg = error.response?.data?.message || "Invalid email or password.";
+      toast.error(msg);
     }
   };
 
