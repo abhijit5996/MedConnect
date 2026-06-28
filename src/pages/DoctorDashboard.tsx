@@ -24,11 +24,13 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import { MedicalReportPreviewer } from "@/components/MedicalReportPreviewer";
 
 const DoctorDashboard = () => {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const [selectedPatient, setSelectedPatient] = useState<any>(null);
+  const [previewRecord, setPreviewRecord] = useState<any>(null);
 
   const patientRecords: Record<string, Array<{ type: string; date: string; result: string; notes: string }>> = {
     "Sanjay Verma": [
@@ -111,50 +113,50 @@ const DoctorDashboard = () => {
 
         {/* Quick Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card className="p-6 hover:shadow-lg transition-shadow">
+          <Card className="p-6 clay-card-purple hover:scale-[1.02] transition-all duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground mb-1">Today's Patients</p>
+                <p className="text-sm uppercase tracking-wider mb-1 opacity-70">Today's Patients</p>
                 <p className="text-2xl font-bold">{apptsLoading ? "..." : appointments.filter((a: any) => a.status === "Pending" || a.status === "Confirmed").length}</p>
               </div>
-              <div className="bg-primary/10 p-3 rounded-full">
-                <Users className="h-6 w-6 text-primary" />
+              <div className="bg-white/30 dark:bg-black/30 p-3 rounded-2xl shadow-sm">
+                <Users className="h-6 w-6" />
               </div>
             </div>
           </Card>
 
-          <Card className="p-6 hover:shadow-lg transition-shadow">
+          <Card className="p-6 clay-card-mint hover:scale-[1.02] transition-all duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground mb-1">Total Patients</p>
+                <p className="text-sm uppercase tracking-wider mb-1 opacity-70">Total Patients</p>
                 <p className="text-2xl font-bold">{apptsLoading ? "..." : (appointments.length + 24)}</p>
               </div>
-              <div className="bg-primary/10 p-3 rounded-full">
-                <Activity className="h-6 w-6 text-primary" />
+              <div className="bg-white/30 dark:bg-black/30 p-3 rounded-2xl shadow-sm">
+                <Activity className="h-6 w-6" />
               </div>
             </div>
           </Card>
 
-          <Card className="p-6 hover:shadow-lg transition-shadow">
+          <Card className="p-6 clay-card-coral hover:scale-[1.02] transition-all duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground mb-1">Pending Reviews</p>
+                <p className="text-sm uppercase tracking-wider mb-1 opacity-70">Pending Reviews</p>
                 <p className="text-2xl font-bold">{apptsLoading ? "..." : appointments.filter((a: any) => a.status === "Pending").length}</p>
               </div>
-              <div className="bg-accent/10 p-3 rounded-full">
-                <FileText className="h-6 w-6 text-accent" />
+              <div className="bg-white/30 dark:bg-black/30 p-3 rounded-2xl shadow-sm">
+                <FileText className="h-6 w-6" />
               </div>
             </div>
           </Card>
 
-          <Card className="p-6 hover:shadow-lg transition-shadow">
+          <Card className="p-6 clay-card-purple hover:scale-[1.02] transition-all duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground mb-1">Avg. Rating</p>
+                <p className="text-sm uppercase tracking-wider mb-1 opacity-70">Avg. Rating</p>
                 <p className="text-2xl font-bold">{profileLoading ? "..." : (profile?.rating || "4.9")}</p>
               </div>
-              <div className="bg-green-100 p-3 rounded-full">
-                <CheckCircle className="h-6 w-6 text-green-600" />
+              <div className="bg-white/30 dark:bg-black/30 p-3 rounded-2xl shadow-sm">
+                <CheckCircle className="h-6 w-6" />
               </div>
             </div>
           </Card>
@@ -361,19 +363,52 @@ const DoctorDashboard = () => {
           </DialogHeader>
           <div className="space-y-4 my-4 max-h-[400px] overflow-y-auto pr-2">
             {selectedPatient && (patientRecords[selectedPatient.name] || []).map((rec: any, idx: number) => (
-              <Card key={idx} className="p-4 bg-secondary/30">
-                <div className="flex justify-between items-start mb-2">
-                  <h4 className="font-bold text-sm text-primary">{rec.type}</h4>
-                  <span className="text-xs text-muted-foreground">{rec.date}</span>
+              <Card key={idx} className="p-4 bg-secondary/30 flex flex-col justify-between gap-3">
+                <div>
+                  <div className="flex justify-between items-start mb-2">
+                    <h4 className="font-bold text-sm text-primary">{rec.type}</h4>
+                    <span className="text-xs text-muted-foreground">{rec.date}</span>
+                  </div>
+                  <p className="text-sm font-semibold mb-1">Result: <span className="text-foreground">{rec.result}</span></p>
+                  <p className="text-xs text-muted-foreground">Notes: {rec.notes}</p>
                 </div>
-                <p className="text-sm font-semibold mb-1">Result: <span className="text-foreground">{rec.result}</span></p>
-                <p className="text-xs text-muted-foreground">Notes: {rec.notes}</p>
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  className="w-full mt-2" 
+                  onClick={() => setPreviewRecord({
+                    ...rec,
+                    patientName: selectedPatient.name,
+                    doctor: user.name || "Dr. Priya Sharma"
+                  })}
+                >
+                  <FileText className="h-3.5 w-3.5 mr-1" />
+                  Preview Report
+                </Button>
               </Card>
             ))}
             {selectedPatient && (!patientRecords[selectedPatient.name] || patientRecords[selectedPatient.name].length === 0) && (
               <p className="text-sm text-muted-foreground py-4 text-center">No clinical records found for this patient.</p>
             )}
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Interactive Report Preview Modal */}
+      <Dialog open={!!previewRecord} onOpenChange={(open) => !open && setPreviewRecord(null)}>
+        <DialogContent className="sm:max-w-3xl">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold text-foreground">Report Preview: {previewRecord?.type}</DialogTitle>
+            <DialogDescription>
+              Patient: <span className="font-semibold text-foreground">{previewRecord?.patientName}</span> • Date: {previewRecord?.date}
+            </DialogDescription>
+          </DialogHeader>
+          {previewRecord && (
+            <MedicalReportPreviewer 
+              record={previewRecord} 
+              onClose={() => setPreviewRecord(null)} 
+            />
+          )}
         </DialogContent>
       </Dialog>
 

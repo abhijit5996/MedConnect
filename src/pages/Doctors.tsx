@@ -4,11 +4,11 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Search, MapPin, Star, Calendar, Video } from "lucide-react";
+import { Search, MapPin, Star, Calendar, Video, Mail, Phone, Award } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import API from "@/lib/api";
 import { Link } from "react-router-dom";
-import { toast } from "sonner";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 const fetchDoctors = async () => {
   const response = await API.get("/doctors");
@@ -18,6 +18,7 @@ const fetchDoctors = async () => {
 const Doctors = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSpecialty, setSelectedSpecialty] = useState("all");
+  const [selectedDoctor, setSelectedDoctor] = useState<any>(null);
 
   const specialties = [
     "All",
@@ -155,7 +156,7 @@ const Doctors = () => {
               </div>
 
               <div className="flex gap-2">
-                <Button variant="outline" className="flex-1" size="sm" onClick={() => toast.info(`Detailed profile for ${doctor.name} is available in the booking panel.`)}>
+                <Button variant="outline" className="flex-1" size="sm" onClick={() => setSelectedDoctor(doctor)}>
                   View Profile
                 </Button>
                 <Link to={`/appointments/book?doctorId=${doctor.id}`} className="flex-1">
@@ -179,6 +180,137 @@ const Doctors = () => {
           </div>
         )}
       </div>
+
+      {/* Doctor Profile Modal */}
+      <Dialog open={selectedDoctor !== null} onOpenChange={(open) => !open && setSelectedDoctor(null)}>
+        <DialogContent className="max-w-2xl bg-white/80 dark:bg-zinc-900/80 border-border/80 backdrop-blur-xl shadow-2xl rounded-3xl p-8 overflow-y-auto max-h-[90vh]">
+          {selectedDoctor && (
+            <div className="space-y-6">
+              {/* Header section */}
+              <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 border-b border-border/45 pb-6">
+                <div className="text-7xl p-4 bg-secondary/50 rounded-3xl shadow-inner shrink-0">
+                  {selectedDoctor.image}
+                </div>
+                <div className="flex-1 text-center sm:text-left space-y-2">
+                  <h2 className="text-3xl font-extrabold text-foreground tracking-tight">{selectedDoctor.name}</h2>
+                  <p className="text-lg text-primary font-semibold">{selectedDoctor.specialty}</p>
+                  <div className="flex flex-wrap justify-center sm:justify-start gap-3 items-center text-sm">
+                    <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-yellow-100 text-yellow-800 dark:bg-yellow-950/40 dark:text-yellow-400 font-semibold shadow-sm">
+                      <Star className="h-4 w-4 fill-current shrink-0" />
+                      {selectedDoctor.rating} ({selectedDoctor.reviews} reviews)
+                    </span>
+                    <span className="text-muted-foreground">•</span>
+                    <span className="text-muted-foreground font-medium">{selectedDoctor.experience} Experience</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bio & Education Grid */}
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div className="flex items-start gap-3">
+                    <Award className="h-5 w-5 text-primary mt-1 shrink-0" />
+                    <div>
+                      <h4 className="font-bold text-foreground">Education & Credentials</h4>
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        {selectedDoctor.specialty === "Cardiologist" && "MD - Cardiology, MBBS - AIIMS Delhi"}
+                        {selectedDoctor.specialty === "General Physician" && "MD - General Medicine, MBBS - Grant Medical College"}
+                        {selectedDoctor.specialty === "Dermatologist" && "DDVL, MBBS - Bangalore Medical College"}
+                        {selectedDoctor.specialty === "Neurologist" && "DM - Neurology, MBBS - AFMC Pune"}
+                        {selectedDoctor.specialty === "Pediatrician" && "MD - Pediatrics, MBBS - Madras Medical College"}
+                        {selectedDoctor.specialty === "Orthopedic" && "MS - Orthopedics, MBBS - Osmania Medical College"}
+                        {!["Cardiologist", "General Physician", "Dermatologist", "Neurologist", "Pediatrician", "Orthopedic"].includes(selectedDoctor.specialty) && "MD, MBBS - Certified Medical Professional"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <MapPin className="h-5 w-5 text-primary mt-1 shrink-0" />
+                    <div>
+                      <h4 className="font-bold text-foreground">Clinic Address</h4>
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        MedConnect Health Hub, Suite 402, {selectedDoctor.location}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex items-start gap-3">
+                    <Mail className="h-5 w-5 text-primary mt-1 shrink-0" />
+                    <div>
+                      <h4 className="font-bold text-foreground">Email Contact</h4>
+                      <p className="text-sm text-muted-foreground select-all">{selectedDoctor.email || `contact.${selectedDoctor.name.toLowerCase().replace(/[^a-z]/g, "")}@medconnect.in`}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <Phone className="h-5 w-5 text-primary mt-1 shrink-0" />
+                    <div>
+                      <h4 className="font-bold text-foreground">Phone Helpline</h4>
+                      <p className="text-sm text-muted-foreground select-all">{selectedDoctor.phone || "+91 99999 00000"}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bio description */}
+              <div className="bg-secondary/40 border border-border/30 rounded-2xl p-5 space-y-2">
+                <h4 className="font-bold text-foreground">Professional Bio</h4>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {selectedDoctor.name} is a dedicated {selectedDoctor.specialty} with a proven clinical history of exceptional patient care. With {selectedDoctor.experience} of medical practice, they focus on preventive treatments, active diagnostics, and counseling. Currently offering consultations at the {selectedDoctor.location} branch and online video sessions.
+                </p>
+              </div>
+
+              {/* Services Offered */}
+              <div className="space-y-3">
+                <h4 className="font-bold text-foreground">Clinical Services</h4>
+                <div className="flex flex-wrap gap-2">
+                  <span className="text-xs bg-card/60 border border-border px-3 py-1.5 rounded-full text-muted-foreground font-medium shadow-sm">Diagnostic Consultation</span>
+                  <span className="text-xs bg-card/60 border border-border px-3 py-1.5 rounded-full text-muted-foreground font-medium shadow-sm">Preventive Therapy</span>
+                  <span className="text-xs bg-card/60 border border-border px-3 py-1.5 rounded-full text-muted-foreground font-medium shadow-sm">Treatment Prescription</span>
+                  {selectedDoctor.videoConsult && (
+                    <span className="text-xs bg-card/60 border border-border px-3 py-1.5 rounded-full text-muted-foreground font-medium shadow-sm">Tele-Health Call</span>
+                  )}
+                  <span className="text-xs bg-card/60 border border-border px-3 py-1.5 rounded-full text-muted-foreground font-medium shadow-sm">Follow-up checkups</span>
+                </div>
+              </div>
+
+              {/* Fee & Booking CTA */}
+              <div className="flex flex-col sm:flex-row items-center justify-between border-t border-border/40 pt-6 gap-4">
+                <div className="flex items-center gap-6">
+                  <div className="space-y-0.5">
+                    <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Consultation Fee</p>
+                    <p className="text-2xl font-extrabold text-foreground">{selectedDoctor.consultationFee}</p>
+                  </div>
+                  <div className="space-y-0.5">
+                    <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Availability</p>
+                    <span className={`text-xs font-semibold px-2 py-0.5 rounded-full inline-block ${
+                      selectedDoctor.availability === "Available Today" 
+                        ? "bg-green-100 text-green-700 dark:bg-green-950/40 dark:text-green-400" 
+                        : "bg-yellow-100 text-yellow-700 dark:bg-yellow-950/40 dark:text-yellow-400"
+                    }`}>
+                      {selectedDoctor.availability}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex gap-3 w-full sm:w-auto">
+                  <Button variant="outline" onClick={() => setSelectedDoctor(null)} className="flex-1 sm:flex-initial">
+                    Close
+                  </Button>
+                  <Link to={`/appointments/book?doctorId=${selectedDoctor.id}`} onClick={() => setSelectedDoctor(null)} className="flex-1 sm:flex-initial">
+                    <Button variant="accent" className="w-full flex items-center gap-1.5">
+                      <Calendar className="h-4 w-4" />
+                      Book Appointment
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
 
       <Footer />
     </div>

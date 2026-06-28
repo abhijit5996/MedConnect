@@ -9,18 +9,18 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-lg transition-all",
+        default: "bg-gradient-to-br from-[#67D4C1] to-[#40B9A4] text-white shadow-[0_8px_20px_-6px_rgba(64,185,164,0.4)] border-none rounded-full hover:scale-[1.03] transition-all duration-300 hover:shadow-[0_12px_25px_-6px_rgba(64,185,164,0.5)] active:scale-95",
         destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline: "border border-input bg-background hover:bg-secondary hover:text-foreground",
+        outline: "border border-white/40 bg-white/20 dark:border-white/10 dark:bg-black/20 hover:bg-white/30 dark:hover:bg-black/30 hover:text-foreground backdrop-blur-md rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.02)] transition-all",
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "hover:bg-secondary hover:text-foreground",
+        ghost: "hover:bg-secondary hover:text-foreground rounded-full",
         link: "text-primary underline-offset-4 hover:underline",
-        accent: "bg-accent text-accent-foreground hover:bg-accent/90 hover:shadow-lg hover:scale-105 transition-all",
+        accent: "bg-gradient-to-br from-[#FF9E8C] to-[#FF7B68] text-white shadow-[0_8px_20px_-6px_rgba(255,123,104,0.4)] border-none rounded-full hover:scale-[1.03] transition-all duration-300 hover:shadow-[0_12px_25px_-6px_rgba(255,123,104,0.5)] active:scale-95",
       },
       size: {
-        default: "h-10 px-4 py-2",
-        sm: "h-9 rounded-md px-3",
-        lg: "h-11 rounded-md px-8",
+        default: "h-10 px-6 py-2",
+        sm: "h-9 rounded-full px-4",
+        lg: "h-11 rounded-full px-8",
         icon: "h-10 w-10",
       },
     },

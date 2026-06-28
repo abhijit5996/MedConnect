@@ -74,7 +74,7 @@ const Navbar = () => {
 
   return (
     <nav className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-7xl">
-      <div className="bg-background/80 backdrop-blur-lg border border-border rounded-full shadow-lg px-6 py-3">
+      <div className="bg-white/20 dark:bg-black/25 backdrop-blur-xl border border-white/45 dark:border-white/10 rounded-full shadow-[0_15px_35px_-8px_rgba(0,0,0,0.05)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] px-6 py-3">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 group">

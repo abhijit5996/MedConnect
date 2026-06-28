@@ -54,13 +54,13 @@ const Home = () => {
                 className="relative rounded-2xl shadow-2xl animate-float transform group-hover:scale-[1.02] transition-transform duration-500"
               />
               {/* Floating Stats */}
-              <div className="absolute -bottom-6 -left-6 bg-background border-2 border-primary rounded-2xl p-4 shadow-xl animate-float hidden lg:block">
-                <p className="text-3xl font-bold text-primary">50K+</p>
-                <p className="text-sm text-muted-foreground">Patients</p>
+              <div className="absolute -bottom-6 -left-6 clay-card-mint p-5 shadow-2xl animate-float hidden lg:block rounded-[24px]">
+                <p className="text-3xl font-bold">50K+</p>
+                <p className="text-xs opacity-85 font-semibold uppercase tracking-wider mt-1">Patients</p>
               </div>
-              <div className="absolute -top-6 -right-6 bg-background border-2 border-accent rounded-2xl p-4 shadow-xl animate-float hidden lg:block" style={{ animationDelay: "0.5s" }}>
-                <p className="text-3xl font-bold text-accent">5K+</p>
-                <p className="text-sm text-muted-foreground">Doctors</p>
+              <div className="absolute -top-6 -right-6 clay-card-coral p-5 shadow-2xl animate-float hidden lg:block rounded-[24px]" style={{ animationDelay: "0.5s" }}>
+                <p className="text-3xl font-bold">5K+</p>
+                <p className="text-xs opacity-85 font-semibold uppercase tracking-wider mt-1">Doctors</p>
               </div>
             </div>
           </div>
@@ -139,53 +139,53 @@ const Home = () => {
               </div>
 
               <div className="grid grid-cols-2 gap-6">
-                <div className="bg-background p-6 rounded-xl shadow-sm">
+                <Card className="p-6">
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="bg-primary/10 p-2 rounded-lg">
+                    <div className="bg-white/30 dark:bg-black/30 p-2.5 rounded-2xl shadow-sm">
                       <TrendingUp className="h-6 w-6 text-primary" />
                     </div>
                     <div>
                       <div className="text-2xl font-bold">500+</div>
-                      <div className="text-sm text-muted-foreground">Hospitals</div>
+                      <div className="text-sm text-muted-foreground font-medium">Hospitals</div>
                     </div>
                   </div>
-                </div>
+                </Card>
 
-                <div className="bg-background p-6 rounded-xl shadow-sm">
+                <Card className="p-6">
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="bg-primary/10 p-2 rounded-lg">
+                    <div className="bg-white/30 dark:bg-black/30 p-2.5 rounded-2xl shadow-sm">
                       <Activity className="h-6 w-6 text-primary" />
                     </div>
                     <div>
                       <div className="text-2xl font-bold">1000+</div>
-                      <div className="text-sm text-muted-foreground">Services</div>
+                      <div className="text-sm text-muted-foreground font-medium">Services</div>
                     </div>
                   </div>
-                </div>
+                </Card>
 
-                <div className="bg-background p-6 rounded-xl shadow-sm">
+                <Card className="p-6">
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="bg-primary/10 p-2 rounded-lg">
+                    <div className="bg-white/30 dark:bg-black/30 p-2.5 rounded-2xl shadow-sm">
                       <Users className="h-6 w-6 text-primary" />
                     </div>
                     <div>
                       <div className="text-2xl font-bold">5000+</div>
-                      <div className="text-sm text-muted-foreground">Doctors</div>
+                      <div className="text-sm text-muted-foreground font-medium">Doctors</div>
                     </div>
                   </div>
-                </div>
+                </Card>
 
-                <div className="bg-background p-6 rounded-xl shadow-sm">
+                <Card className="p-6">
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="bg-primary/10 p-2 rounded-lg">
+                    <div className="bg-white/30 dark:bg-black/30 p-2.5 rounded-2xl shadow-sm">
                       <Shield className="h-6 w-6 text-primary" />
                     </div>
                     <div>
                       <div className="text-2xl font-bold">50,000+</div>
-                      <div className="text-sm text-muted-foreground">Patients</div>
+                      <div className="text-sm text-muted-foreground font-medium">Patients</div>
                     </div>
                   </div>
-                </div>
+                </Card>
               </div>
             </div>
 

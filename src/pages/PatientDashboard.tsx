@@ -25,6 +25,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import { MedicalReportPreviewer } from "@/components/MedicalReportPreviewer";
 
 const PatientDashboard = () => {
   const navigate = useNavigate();
@@ -91,50 +92,50 @@ const PatientDashboard = () => {
 
         {/* Quick Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card className="p-6 hover:shadow-lg transition-shadow">
+          <Card className="p-6 clay-card-purple hover:scale-[1.02] transition-all duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground mb-1">Appointments</p>
+                <p className="text-sm uppercase tracking-wider mb-1 opacity-70">Appointments</p>
                 <p className="text-2xl font-bold">{apptsLoading ? "..." : appointments.length}</p>
               </div>
-              <div className="bg-primary/10 p-3 rounded-full">
-                <Calendar className="h-6 w-6 text-primary" />
+              <div className="bg-white/30 dark:bg-black/30 p-3 rounded-2xl shadow-sm">
+                <Calendar className="h-6 w-6" />
               </div>
             </div>
           </Card>
 
-          <Card className="p-6 hover:shadow-lg transition-shadow">
+          <Card className="p-6 clay-card-mint hover:scale-[1.02] transition-all duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground mb-1">Medical Records</p>
+                <p className="text-sm uppercase tracking-wider mb-1 opacity-70">Medical Records</p>
                 <p className="text-2xl font-bold">3</p>
               </div>
-              <div className="bg-primary/10 p-3 rounded-full">
-                <FileText className="h-6 w-6 text-primary" />
+              <div className="bg-white/30 dark:bg-black/30 p-3 rounded-2xl shadow-sm">
+                <FileText className="h-6 w-6" />
               </div>
             </div>
           </Card>
 
-          <Card className="p-6 hover:shadow-lg transition-shadow">
+          <Card className="p-6 clay-card-coral hover:scale-[1.02] transition-all duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground mb-1">Notifications</p>
+                <p className="text-sm uppercase tracking-wider mb-1 opacity-70">Notifications</p>
                 <p className="text-2xl font-bold">2</p>
               </div>
-              <div className="bg-accent/10 p-3 rounded-full">
-                <Bell className="h-6 w-6 text-accent" />
+              <div className="bg-white/30 dark:bg-black/30 p-3 rounded-2xl shadow-sm">
+                <Bell className="h-6 w-6" />
               </div>
             </div>
           </Card>
 
-          <Card className="p-6 hover:shadow-lg transition-shadow">
+          <Card className="p-6 clay-card-purple hover:scale-[1.02] transition-all duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground mb-1">Health Score</p>
+                <p className="text-sm uppercase tracking-wider mb-1 opacity-70">Health Score</p>
                 <p className="text-2xl font-bold">{vitalsLoading ? "..." : (vitals?.healthScore || 85)}</p>
               </div>
-              <div className="bg-green-100 p-3 rounded-full">
-                <Heart className="h-6 w-6 text-green-600" />
+              <div className="bg-white/30 dark:bg-black/30 p-3 rounded-2xl shadow-sm">
+                <Heart className="h-6 w-6" />
               </div>
             </div>
           </Card>
@@ -316,32 +317,19 @@ const PatientDashboard = () => {
 
       {/* Medical Record Modal */}
       <Dialog open={!!selectedRecord} onOpenChange={(open) => !open && setSelectedRecord(null)}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-3xl">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-foreground">{selectedRecord?.type}</DialogTitle>
+            <DialogTitle className="text-xl font-bold text-foreground">Report Preview: {selectedRecord?.type}</DialogTitle>
             <DialogDescription>
-              Attending: <span className="font-semibold text-foreground">{selectedRecord?.doctor}</span> • Date: {selectedRecord?.date}
+              Physician: <span className="font-semibold text-foreground">{selectedRecord?.doctor}</span> • Date: {selectedRecord?.date}
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4 my-4">
-            <div>
-              <h4 className="text-sm font-bold text-primary mb-1">Clinical Results</h4>
-              <p className="text-sm text-foreground bg-secondary/40 p-3 rounded-lg border border-border leading-relaxed font-mono">
-                {selectedRecord?.result}
-              </p>
-            </div>
-            <div>
-              <h4 className="text-sm font-bold text-primary mb-1">Doctor Remarks</h4>
-              <p className="text-xs text-muted-foreground bg-secondary/20 p-3 rounded-lg">
-                {selectedRecord?.notes}
-              </p>
-            </div>
-            <div className="pt-2">
-              <Button className="w-full flex items-center justify-center gap-1.5" size="sm" onClick={() => toast.success(`Downloaded: ${selectedRecord?.type.toLowerCase().replace(" ", "_")}_report.pdf`)}>
-                Download Diagnostic PDF
-              </Button>
-            </div>
-          </div>
+          {selectedRecord && (
+            <MedicalReportPreviewer 
+              record={selectedRecord} 
+              onClose={() => setSelectedRecord(null)} 
+            />
+          )}
         </DialogContent>
       </Dialog>
 

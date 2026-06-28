@@ -48,6 +48,7 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<"doctors" | "patients" | "appointments" | "analytics">("doctors");
+  const [dateRange, setDateRange] = useState<"7" | "30" | "all">("7");
 
   // State for deletion modals
   const [deleteUserId, setDeleteUserId] = useState<string | null>(null);
@@ -177,6 +178,21 @@ const AdminDashboard = () => {
   const doctorsList = users.filter((u: any) => u.role === "doctor");
   const patientsList = users.filter((u: any) => u.role === "patient");
  
+  const filterByDateRange = (dateInput: string | Date | undefined) => {
+    if (!dateInput) return false;
+    if (dateRange === "all") return true;
+    const date = new Date(dateInput);
+    const now = new Date();
+    const diffTime = Math.abs(now.getTime() - date.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const maxDays = dateRange === "7" ? 7 : 30;
+    return diffDays <= maxDays;
+  };
+
+  const filteredAppointments = useMemo(() => {
+    return appointments.filter((a: any) => filterByDateRange(a.dateTime || a.createdAt));
+  }, [appointments, dateRange]);
+
   // 1. Appointment status chart data
   const appointmentStatusData = useMemo(() => {
     const counts: Record<string, number> = {
@@ -185,14 +201,14 @@ const AdminDashboard = () => {
       Cancelled: 0,
       Pending: 0,
     };
-    appointments.forEach((appt: any) => {
+    filteredAppointments.forEach((appt: any) => {
       const status = appt.status || "Pending";
       if (status in counts) {
         counts[status]++;
       }
     });
     return Object.entries(counts).map(([name, value]) => ({ name, value }));
-  }, [appointments]);
+  }, [filteredAppointments]);
 
   const STATUS_COLORS = {
     Confirmed: "#10b981", // Emerald
@@ -213,12 +229,13 @@ const AdminDashboard = () => {
       .sort((a, b) => b.value - a.value);
   }, [doctorsList]);
 
-  // 3. Last 7 Days Signups Trend
+  // 3. Dynamic Signups Trend
   const registrationData = useMemo(() => {
     const dailyCounts: Record<string, number> = {};
+    const daysCount = dateRange === "7" ? 7 : dateRange === "30" ? 30 : 90;
     
-    // Initialize last 7 days with 0
-    for (let i = 6; i >= 0; i--) {
+    // Initialize days with 0
+    for (let i = daysCount - 1; i >= 0; i--) {
       const d = new Date();
       d.setDate(d.getDate() - i);
       const dateStr = d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
@@ -235,7 +252,7 @@ const AdminDashboard = () => {
     });
 
     return Object.entries(dailyCounts).map(([date, count]) => ({ date, count }));
-  }, [patientsList]);
+  }, [patientsList, dateRange]);
 
   if (isCheckingAuth) {
     return (
@@ -379,12 +396,27 @@ const AdminDashboard = () => {
         <Card className="p-6 bg-card/40 backdrop-blur-md border-border/80 shadow-md">
           {activeTab === "analytics" && (
             <div className="space-y-8">
-              <div className="flex justify-between items-center mb-4">
+              <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 border-b border-border/40 pb-4 mb-6">
                 <div>
-                  <h2 className="text-xl font-bold">System Metrics & Analytics</h2>
+                  <h2 className="text-xl font-bold text-foreground">System Metrics & Analytics</h2>
                   <p className="text-sm text-muted-foreground mt-0.5">
                     Visualise operational trends, registration metrics, and booking statuses.
                   </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <label htmlFor="analytics-date-range" className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                    Range:
+                  </label>
+                  <select
+                    id="analytics-date-range"
+                    value={dateRange}
+                    onChange={(e) => setDateRange(e.target.value as any)}
+                    className="h-9 rounded-full border border-input bg-card px-3.5 py-1 text-xs font-semibold ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer hover:bg-secondary/40 transition-colors"
+                  >
+                    <option value="7">Last 7 Days</option>
+                    <option value="30">Last 30 Days</option>
+                    <option value="all">All Time (90 Days)</option>
+                  </select>
                 </div>
               </div>
 
@@ -418,8 +450,8 @@ const AdminDashboard = () => {
                   </span>
                   <div className="flex items-baseline gap-2 mt-2">
                     <span className="text-2xl font-bold text-foreground">
-                      {appointments.length > 0
-                        ? ((appointments.filter((a: any) => a.status === "Confirmed" || a.status === "Completed").length / appointments.length) * 100).toFixed(0)
+                      {filteredAppointments.length > 0
+                        ? ((filteredAppointments.filter((a: any) => a.status === "Confirmed" || a.status === "Completed").length / filteredAppointments.length) * 100).toFixed(0)
                         : "0"}%
                     </span>
                     <span className="text-xs font-medium text-emerald-500 font-semibold">Active/Success Rate</span>
