@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import API from "@/lib/api";
@@ -44,8 +45,7 @@ const BookAppointment = () => {
       navigate("/patient-dashboard");
     },
     onError: (error: any) => {
-      const msg = error.response?.data?.message || "Failed to book appointment. Please try again.";
-      toast.error(msg);
+      toast.error(error.response?.data?.message || "Failed to book appointment");
     },
   });
 
@@ -56,17 +56,17 @@ const BookAppointment = () => {
       return;
     }
     if (!formData.dateTime) {
-      toast.error("Please choose a date and time");
+      toast.error("Please select preferred date & time");
       return;
     }
     mutation.mutate(formData);
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background text-foreground flex flex-col">
       <Navbar />
 
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-12 max-w-2xl">
+      <main className="flex-1 max-w-2xl w-full mx-auto px-4 py-8">
         <Link to="/patient-dashboard" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6">
           <ArrowLeft className="h-4 w-4" />
           Back to Dashboard
@@ -90,36 +90,39 @@ const BookAppointment = () => {
               {/* Doctor Selection */}
               <div className="space-y-2">
                 <Label htmlFor="doctor">Select Specialist</Label>
-                <select
-                  id="doctor"
-                  value={formData.doctorId}
-                  onChange={(e) => setFormData({ ...formData, doctorId: e.target.value })}
-                  className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-75 disabled:cursor-not-allowed"
-                  required
+                <Select
+                  value={formData.doctorId || undefined}
+                  onValueChange={(val) => setFormData({ ...formData, doctorId: val })}
                   disabled={!!preselectedDoctorId}
                 >
-                  <option value="">-- Choose a Doctor --</option>
-                  {doctors.map((doc: any) => (
-                    <option key={doc.id} value={doc.id}>
-                      {doc.name} - {doc.specialty} ({doc.consultationFee})
-                    </option>
-                  ))}
-                </select>
+                  <SelectTrigger id="doctor" className="w-full">
+                    <SelectValue placeholder="-- Choose a Doctor --" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {doctors.map((doc: any) => (
+                      <SelectItem key={doc.id} value={doc.id}>
+                        {doc.name} - {doc.specialty} ({doc.consultationFee})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               {/* Consultation Type */}
               <div className="space-y-2">
                 <Label htmlFor="type">Consultation Type</Label>
-                <select
-                  id="type"
+                <Select
                   value={formData.type}
-                  onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                  className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                  required
+                  onValueChange={(val) => setFormData({ ...formData, type: val })}
                 >
-                  <option value="In-Person">In-Person Visit</option>
-                  <option value="Video Call">Telemedicine Video Call</option>
-                </select>
+                  <SelectTrigger id="type" className="w-full">
+                    <SelectValue placeholder="Select Consultation Type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="In-Person">In-Person Visit</SelectItem>
+                    <SelectItem value="Video Call">Telemedicine Video Call</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               {/* Date Time Picker */}
@@ -161,7 +164,7 @@ const BookAppointment = () => {
             </form>
           )}
         </Card>
-      </div>
+      </main>
       <Footer />
     </div>
   );

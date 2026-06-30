@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import {
@@ -407,16 +408,19 @@ const AdminDashboard = () => {
                   <label htmlFor="analytics-date-range" className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
                     Range:
                   </label>
-                  <select
-                    id="analytics-date-range"
+                  <Select
                     value={dateRange}
-                    onChange={(e) => setDateRange(e.target.value as any)}
-                    className="h-9 rounded-full border border-input bg-card px-3.5 py-1 text-xs font-semibold ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer hover:bg-secondary/40 transition-colors"
+                    onValueChange={(val) => setDateRange(val as any)}
                   >
-                    <option value="7">Last 7 Days</option>
-                    <option value="30">Last 30 Days</option>
-                    <option value="all">All Time (90 Days)</option>
-                  </select>
+                    <SelectTrigger id="analytics-date-range" className="w-[160px] h-9 rounded-full text-xs font-semibold bg-card border-input">
+                      <SelectValue placeholder="Select Range" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="7">Last 7 Days</SelectItem>
+                      <SelectItem value="30">Last 30 Days</SelectItem>
+                      <SelectItem value="all">All Time (90 Days)</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
 

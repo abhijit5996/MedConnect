@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Activity } from "lucide-react";
 import { toast } from "sonner";
 
@@ -102,16 +103,18 @@ const Register = () => {
 
           <div className="space-y-2">
             <Label htmlFor="role">I am a</Label>
-            <select
-              id="role"
+            <Select
               value={formData.role}
-              onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-              className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-              required
+              onValueChange={(val) => setFormData({ ...formData, role: val })}
             >
-              <option value="patient">Patient</option>
-              <option value="doctor">Doctor</option>
-            </select>
+              <SelectTrigger id="role" className="w-full">
+                <SelectValue placeholder="Select role" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="patient">Patient</SelectItem>
+                <SelectItem value="doctor">Doctor</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-2">
