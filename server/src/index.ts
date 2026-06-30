@@ -33,13 +33,27 @@ app.get("/health", (req, res) => {
   res.json({ status: "healthy", timestamp: new Date() });
 });
 
+import fs from "fs";
+
 // Serve static files from React build directory
 const clientBuildPath = path.join(__dirname, "../../client/dist");
+console.log("📂 Resolved Client Build Path:", clientBuildPath);
+console.log("📂 Does Client Build Path exist?:", fs.existsSync(clientBuildPath));
+if (fs.existsSync(clientBuildPath)) {
+  console.log("📂 Contents of Client Build Path:", fs.readdirSync(clientBuildPath));
+}
+
 app.use(express.static(clientBuildPath));
 
 // Serve React index.html for all non-API paths (SPA fallback)
 app.get("*", (req, res) => {
-  res.sendFile(path.join(clientBuildPath, "index.html"));
+  const indexPath = path.join(clientBuildPath, "index.html");
+  if (fs.existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
+    console.error("❌ index.html not found at:", indexPath);
+    res.status(404).send("Frontend assets not found or still building.");
+  }
 });
 
 const startServer = async () => {
